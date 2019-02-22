@@ -1,8 +1,6 @@
-// parei em 18:44 do vídeo
-
 const firePixelsArray = []
-const fireWidth = 10
-const fireHeight = 10
+const fireWidth = 80
+const fireHeight = 80
 const fireColorsPalette = [
     {"r":7,"g":7,"b":7},
     {"r":31,"g":7,"b":7},
@@ -43,12 +41,14 @@ const fireColorsPalette = [
     {"r":255,"g":255,"b":255}
 ]
 
+const debug = false
+
 function start() {
     createFireDataStructure()
     createFireSource()
     renderFire()
 
-    setInterval(calculateFirePropagation, 1000)
+    setInterval(calculateFirePropagation, 1)
 }
 
 function createFireDataStructure() { 
@@ -62,12 +62,25 @@ function calculateFirePropagation() {
     for (let column = 0; column < fireWidth; column++) {
         for (let row = 0; row < fireHeight; row++) {
             const pixelIndex = column + (fireWidth * row)
+            updateFireIntensityPerPixels(pixelIndex)
         }
     }
+    renderFire()
 }
 
 function updateFireIntensityPerPixels(currentPixelIndex) {
     const belowPixelIndex = currentPixelIndex + fireWidth
+    if (belowPixelIndex >= fireWidth * fireHeight) {
+        return
+    }
+
+    const decay = Math.floor(Math.random() * 3)
+    const belowPixelFireIntensity = firePixelsArray[belowPixelIndex]
+    const newFireIntensity = belowPixelFireIntensity - decay
+
+    if (newFireIntensity < 0) return 
+    
+    firePixelsArray[currentPixelIndex - decay] = newFireIntensity
 }
 
 function renderFire() { 
@@ -76,11 +89,17 @@ function renderFire() {
         table += '<tr>'
         for (let column = 0; column < fireWidth; column++) {
             let pixelIndex = column + (fireWidth * row)
-            let fireItensity = firePixelsArray[pixelIndex]
-            table += `<td>
+            let fireIntensity = firePixelsArray[pixelIndex]
+            if (debug) {
+                table += `<td>
                 <div class='pixel-index'>${pixelIndex}</div>
-                ${fireItensity}
-            </td>`
+                    ${fireIntensity}
+                </td>`
+            } else {
+                const color = fireColorsPalette[fireIntensity]
+                const colorString = `rgb(${color.r}, ${color.g}, ${color.b})`
+                table += `<td class="pixel" style="background-color: ${colorString}"></td>`
+            }
         }
         table += '</tr>'
         
@@ -93,9 +112,7 @@ function createFireSource() {
     for (let column = 0; column < fireWidth; column++) {
         const overflowPixelIndex = fireWidth * fireHeight
         const pixelIndex = (overflowPixelIndex - fireWidth) + column
-
         firePixelsArray[pixelIndex] = 36
-        
     }
 }
 

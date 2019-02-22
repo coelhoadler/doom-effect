@@ -1,6 +1,16 @@
+body {
+    background-color: #000;    
+}
+
+#root {
+    left: 50%;
+    top: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
 table {
     border-collapse: collapse;
-    border: 1px solid #000;
 }
 
 td {
@@ -10,6 +20,12 @@ td {
     text-align: center;
     vertical-align: middle;
     position: relative;
+}
+
+td.pixel {
+    width: 4px;
+    height: 4px;
+    border: 0;
 }
 
 .pixel-index {
